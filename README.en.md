@@ -65,6 +65,11 @@ Remove with `dsh plugin --profile web remove dsh-convo-tally`.
 
 ## Pricing
 
+Two conventions up front:
+
+- **"Today" rolls over at midnight Beijing time (UTC+8)**, not your local timezone.
+- **Settlement happens once per model call**, so the number steps rather than ticking per token.
+
 ### Rates (per 1M tokens, ¥ / $)
 
 | Model | Tier | Cache hit | Cache miss | Output |

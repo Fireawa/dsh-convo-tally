@@ -2,7 +2,7 @@
   "name": "dsh-convo-tally",
   "version": "0.1.0",
   "type": "module",
-  "description": "DSH 侧栏会话记账：本对话的「今日花费」与「累计花费」，人民币/美元双币，按官方峰谷价目表逐次调用计价。",
+  "description": "DSH 侧栏会话记账：本对话的今日与累计花费，人民币/美元双币，按官方峰谷价目表在每次模型调用时结算。",
   "keywords": [
     "dsh",
     "deepseek-harness",
