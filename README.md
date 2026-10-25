@@ -6,12 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Release](https://img.shields.io/github/v/release/Fireawa/dsh-convo-tally)](https://github.com/Fireawa/dsh-convo-tally/releases)
 
-```
-[重置] [¥]
-本对话 · 今日   ¥3.82
-本对话 · 累计   ¥12.34
-● 周末谷价 · 1天9小时后进入高峰
-```
+![侧栏效果：重置按钮、币种切换、本对话今日与累计金额、峰谷角标](https://raw.githubusercontent.com/Fireawa/dsh-convo-tally/main/docs/screenshot.png)
 
 [English](README.en.md) · [更新日志](CHANGELOG.md) · [许可](#许可)
 

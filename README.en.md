@@ -6,12 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Release](https://img.shields.io/github/v/release/Fireawa/dsh-convo-tally)](https://github.com/Fireawa/dsh-convo-tally/releases)
 
-```
-[reset] [¥]
-This chat · today   ¥3.82
-This chat · total   ¥12.34
-● Weekend off-peak · peak in 1d 9h
-```
+![Sidebar widget: reset button, currency toggle, today and total amounts, peak/off-peak badge](https://raw.githubusercontent.com/Fireawa/dsh-convo-tally/main/docs/screenshot.png)
 
 [中文](README.md) · [Changelog](CHANGELOG.md) · [License](#license)
 

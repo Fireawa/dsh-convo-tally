@@ -10,6 +10,7 @@
 - 删除「已知限制」段落（中英两版 README 与 CHANGELOG 中的对应小节）。
 - 安装说明补充「锁定版本」与「离线安装」；已发布 tag `v0.1.0` 与对应 GitHub Release（附 tgz）。
 - 描述文案统一（GitHub About 与 `package.json`）；README 补充两条口径：「今日按北京时间 0 点切换」「每次模型调用结算一次」。
+- README 开头加入真实侧栏截图（`docs/screenshot.png`），替换原来的纯文本示意。
 
 ## [0.1.0] - 2026-10-25
 
