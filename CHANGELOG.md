@@ -2,6 +2,12 @@
 
 本项目遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [Unreleased]
+
+### 文档
+
+- 安装说明改为**仅 GitHub 安装**：npm 包尚未发布，原先的 `dsh plugin --profile web add dsh-convo-tally` 会 404。
+
 ## [0.1.0] - 2026-10-25
 
 首个公开版本。

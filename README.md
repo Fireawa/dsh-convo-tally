@@ -24,13 +24,7 @@
 
 ## 安装
 
-从 npm 安装：
-
-```bash
-dsh plugin --profile web add dsh-convo-tally
-```
-
-从 GitHub 源码安装：
+目前**只支持从 GitHub 安装**（npm 包尚未发布）：
 
 ```bash
 dsh plugin --profile web add github:Fireawa/dsh-convo-tally

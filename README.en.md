@@ -24,13 +24,7 @@ This chat · total   ¥12.34
 
 ## Install
 
-From npm:
-
-```bash
-dsh plugin --profile web add dsh-convo-tally
-```
-
-From source:
+**GitHub only for now** — the npm package is not published yet:
 
 ```bash
 dsh plugin --profile web add github:Fireawa/dsh-convo-tally
