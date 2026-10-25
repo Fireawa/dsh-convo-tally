@@ -200,7 +200,67 @@ check('基线条目 ≤ 50', keyCount <= 50, true)
 check('最新的那条还在', store['session-59'] !== undefined, true)
 check('最旧的已被淘汰', store['session-0'] === undefined, true)
 
-console.log('\n[13] 容错')
+console.log('\n[13] 账单:近 7 天每天的费用')
+/** 取账单面板里的行(7 天 + 合计)。 */
+const billRowNodes = tree => {
+  const out = []
+  const walk = n => {
+    if (!n || typeof n !== 'object') return
+    if (Array.isArray(n)) { n.forEach(walk); return }
+    if (typeof n.props?.className === 'string' && n.props.className.includes('ccw-bill-row')) out.push(n)
+    if (n.children) n.children.forEach(walk)
+  }
+  walk(tree)
+  return out
+}
+const billButton = () => buttonsOf(Widget()).find(b => b.children[0] === '账单')
+const shiftDay = (key, delta) => new Date(Date.parse(key + 'T00:00:00Z') + delta * 86400000).toISOString().slice(0, 10)
+
+const todayK = new Date(Date.now() + 8 * 3600000).toISOString().slice(0, 10)
+const yestK = shiftDay(todayK, -1)
+const daysFixture = [
+  { day: yestK, cny: 1.5, usd: 0.21, calls: 4 },
+  { day: todayK, cny: 3.82, usd: 0.53, calls: 9 },
+]
+
+// 先确保面板关闭(前面几节可能没碰过它)
+if (billButton() && billRowNodes(Widget()).length > 0) billButton().props.onClick()
+check('按钮存在且默认关闭', billRowNodes(Widget()).length, 0)
+
+Probe({ useProjection: () => view({ sessionId: 'session-a', dayKey: todayK, todayCny: 3.82, totalCny: 5.32, days: daysFixture }) })
+billButton().props.onClick()
+const billText = textOf(Widget())
+check('面板出现', billRowNodes(Widget()).length, 8)   // 7 天 + 合计
+check('标题含「近 7 天」', billText.includes('近 7 天'), true)
+check('今天那行显示 ¥3.82', billText.includes('¥3.82'), true)
+check('昨天那行显示 ¥1.50', billText.includes('¥1.50'), true)
+check('合计 = 3.82 + 1.50 = ¥5.32', billText.includes('¥5.32'), true)
+check('没有数据的日子显示 ¥0.00', billText.includes('¥0.00'), true)
+
+// 切币种:面板跟着变
+buttonsOf(Widget()).find(b => ['¥', '$'].includes(b.children[0])).props.onClick()
+const billUsd = textOf(Widget())
+check('面板切到美元 $0.53', billUsd.includes('$0.53'), true)
+check('面板合计 $0.74', billUsd.includes('$0.74'), true)
+buttonsOf(Widget()).find(b => ['¥', '$'].includes(b.children[0])).props.onClick()
+
+// 重置只影响累计,不影响账单里的历史
+buttonsOf(Widget()).find(b => b.children[0] === '重置').props.onClick()
+check('重置后账单里今天仍是 ¥3.82', textOf(Widget()).includes('¥3.82'), true)
+
+// 再点一次收起
+billButton().props.onClick()
+check('再点收起', billRowNodes(Widget()).length, 0)
+
+// 老宿主没有 days 字段时,不崩、显示全 0
+Probe({ useProjection: () => view({ sessionId: 'session-a', days: undefined }) })
+billButton().props.onClick()
+const noDays = textOf(Widget())
+check('没有 days 也不崩', billRowNodes(Widget()).length, 8)
+check('全部显示 ¥0.00', /近 7 天/.test(noDays) && noDays.includes('¥0.00'), true)
+billButton().props.onClick()
+
+console.log('\n[14] 容错')
 for (const [label, ctx] of [['空 ctx', {}], ['slots undefined', { slots: undefined }], ['slots 形状不对', { slots: { register: 'x' } }]]) {
   let threw = false
   try { exports.apply(ctx) } catch (err) { threw = true }

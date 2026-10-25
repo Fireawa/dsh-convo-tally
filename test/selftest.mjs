@@ -146,11 +146,56 @@ check('无模型信息 → 未计价 1', view(s9c).unpriced, 1)
 check('无模型信息 → 金额 0', view(s9c).totalCny, 0)
 
 // ── 10. schema ─────────────────────────────────────────────────
-console.log('\n[10] schema 校验')
+console.log('\n[10] 按天明细(供「账单」看一周)')
+// 三个不同的北京日,各一笔 1M 未命中(谷价 ¥1 / $0.15)
+const d1 = Date.parse('2026-10-22T14:00:00Z') // 北京 10-22 周四 22:00(谷)
+const d2 = Date.parse('2026-10-23T14:00:00Z') // 10-23 周五 22:00(谷)
+const d3 = Date.parse('2026-10-24T14:00:00Z') // 10-24 周六 22:00(谷)
+const sDays = fold(init(), [
+  msg(1, d1, usage(1_000_000, 0), 'deepseek-flash', 1, 1),
+  msg(2, d2, usage(1_000_000, 0), 'deepseek-flash', 2, 1),
+  msg(3, d3, usage(1_000_000, 0), 'deepseek-flash', 3, 1),
+])
+const vDays = view(sDays)
+check('3 天各一条', vDays.days.length, 3)
+check('日期升序', JSON.stringify(vDays.days.map(d => d.day)), JSON.stringify(['2026-10-22', '2026-10-23', '2026-10-24']))
+check('每天 ¥1', JSON.stringify(vDays.days.map(d => d.cny)), JSON.stringify([1, 1, 1]))
+check('每天 $0.15', JSON.stringify(vDays.days.map(d => d.usd)), JSON.stringify([0.15, 0.15, 0.15]))
+check('每天 1 次调用', JSON.stringify(vDays.days.map(d => d.calls)), JSON.stringify([1, 1, 1]))
+check('今日 = 最后一天', vDays.todayCny, 1)
+check('累计 = 三天之和', vDays.totalCny, 3)
+
+// 只有 8 天的余量:连打 10 天,最旧的两天应被裁掉
+let sPrune = init()
+for (let i = 1; i <= 10; i++) {
+  const at = Date.parse('2026-10-' + String(i).padStart(2, '0') + 'T14:00:00Z')
+  sPrune = P.apply(sPrune, msg(i, at, usage(1_000_000, 0), 'deepseek-flash', i, 1))
+}
+const vPrune = view(sPrune)
+check('只保留 8 天', vPrune.days.length, 8)
+check('保留的是最近 8 天', vPrune.days[0].day, '2026-10-03')
+check('最旧的两天被裁掉', vPrune.days.some(d => d.day === '2026-10-01' || d.day === '2026-10-02'), false)
+check('累计不受裁剪影响(仍是 10 天)', Math.round(vPrune.totalCny), 10)
+
+// 同一结算槽换到另一天:两天的桶都要动
+// 第二次必须有**不同**的用量,否则会被幂等规则短路(那才是正确行为)。
+const sMove = fold(init(), [
+  msg(1, d2, usage(1_000_000, 0), 'deepseek-flash', 1, 1),
+  msg(2, d3, usage(1_000_000, 1000), 'deepseek-flash', 1, 1),
+])
+const vMove = view(sMove)
+const dayOf = (v, key) => v.days.find(d => d.day === key)
+check('前一天被扣回 0', dayOf(vMove, '2026-10-23').cny, 0)
+check('前一天调用数也扣回 0', dayOf(vMove, '2026-10-23').calls, 0)
+check('后一天拿到新值 ¥1.004', dayOf(vMove, '2026-10-24').cny, 1.004)
+check('后一天调用数 1', dayOf(vMove, '2026-10-24').calls, 1)
+check('累计 = 1.004', vMove.totalCny, 1.004)
+
+console.log('\n[11] schema 校验')
 check('state 通过', P.stateSchema.safeParse(s6).success, true)
 check('view 通过', P.wire.viewSchema.safeParse(view(s6)).success, true)
 check('北京日界', beijingDayKey(Date.parse('2026-10-24T15:59:59Z')), '2026-10-24')
-check('stateVersion = 3', P.stateVersion, 3)
+check('stateVersion = 4', P.stateVersion, 4)
 
 console.log('\n' + (failed === 0 ? '全部通过' : failed + ' 项失败'))
 process.exit(failed === 0 ? 0 : 1)
