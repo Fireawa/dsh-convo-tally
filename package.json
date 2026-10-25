@@ -1,0 +1,66 @@
+{
+  "name": "dsh-convo-tally",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "DSH 侧栏会话记账：本对话的「今日花费」与「累计花费」，人民币/美元双币，按官方峰谷价目表逐次调用计价。",
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "dsh-plugin",
+    "cost",
+    "usage",
+    "billing",
+    "peak-off-peak",
+    "sidebar",
+    "deepseek"
+  ],
+  "license": "MIT",
+  "author": "Fireawa",
+  "homepage": "https://github.com/Fireawa/dsh-convo-tally#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fireawa/dsh-convo-tally.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Fireawa/dsh-convo-tally/issues"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "exports": {
+    ".": {
+      "default": "./lib/index.js"
+    },
+    "./client": {
+      "default": "./lib/client.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "cordis.patch.yml",
+    "README.md",
+    "README.en.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node test/selftest.mjs && node test/client-selftest.mjs && node test/consistency.mjs",
+    "check": "node --check lib/index.js && node --check lib/pricing.js && node --check lib/client.js && npm test"
+  },
+  "dependencies": {
+    "zod": "4.6.5"
+  },
+  "meta": {
+    "title": "会话记账（Convo Tally）",
+    "description": "侧栏两行：本对话今日花费、累计花费，旁边标注当前是高峰还是谷价；可一键重置累计、切换人民币/美元。计价按官方价目表，以每次调用的发起时刻判定峰谷。"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web"
+    }
+  }
+}

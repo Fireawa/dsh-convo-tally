@@ -1,0 +1,5 @@
+# dsh-convo-tally bundle patch:向 profile 插入一行宿主插件。
+# 这一行按名字从 profile 自己的 node_modules 里解析(dsh plugin --profile web add <path> 装进来的)。
+- insert:
+    - id: convo-tally
+      name: dsh-convo-tally
