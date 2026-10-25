@@ -24,7 +24,15 @@ jobs:
 
       - name: 语法检查
         run: |
-          for file in lib/*.js test/*.mjs scripts/*.mjs; do
+          # 目录可能为空（例如某个子目录的文件被删光），nullglob 让不匹配的模式展开成空数组
+          shopt -s nullglob
+          files=(index.js lib/*.js test/*.mjs scripts/*.mjs)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "没有找到待检查的源文件" >&2
+            exit 1
+          fi
+          for file in "${files[@]}"; do
+            echo "check $file"
             node --check "$file"
           done
 
