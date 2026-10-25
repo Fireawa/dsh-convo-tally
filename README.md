@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Release](https://img.shields.io/github/v/release/Fireawa/dsh-convo-tally)](https://github.com/Fireawa/dsh-convo-tally/releases)
 
-![侧栏效果：重置按钮、币种切换、本对话今日与累计金额、峰谷角标](https://raw.githubusercontent.com/Fireawa/dsh-convo-tally/main/docs/screenshot.png)
+![侧栏效果：重置 / 币种切换 / 账单三个按钮，本对话今日与累计金额，峰谷角标](https://raw.githubusercontent.com/Fireawa/dsh-convo-tally/main/docs/screenshot.png)
 
 [English](README.en.md) · [更新日志](CHANGELOG.md) · [许可](#许可)
 
@@ -151,15 +151,6 @@ lib/pricing.js     官方价目表、峰谷判定、花费计算（纯函数）
 lib/client.js      浏览器侧：探针 + 侧栏渲染 + 两个按钮
 test/              selftest / client-selftest / consistency
 ```
-
-## 反馈
-
-- 遇到问题、发现金额对不上，或想提建议：**[开 issue](https://github.com/Fireawa/dsh-convo-tally/issues)**。
-- 报问题时请尽量带上：
-  - DSH 版本与插件版本（Release 版本号，或 `npm ls dsh-convo-tally`）；
-  - 侧栏显示金额与官方账单的对比（涉及计价偏差时）；
-  - 复现步骤：什么时候开始的、切过币种或重置过没有。
-- 以 issue 为主，PR 不保证合并。
 
 ## 许可
 
