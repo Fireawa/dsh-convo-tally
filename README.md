@@ -2,6 +2,10 @@
 
 **DSH 侧栏会话记账。** 两行数字，回答一个问题：*这个对话花了多少钱？*
 
+[![CI](https://github.com/Fireawa/dsh-convo-tally/actions/workflows/ci.yml/badge.svg)](https://github.com/Fireawa/dsh-convo-tally/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/Fireawa/dsh-convo-tally)](https://github.com/Fireawa/dsh-convo-tally/releases)
+
 ```
 [重置] [¥]
 本对话 · 今日   ¥3.82
@@ -23,6 +27,8 @@
 - 不联网、不发遥测、不读凭据。
 
 ## 安装
+
+要求：**Node.js 20+**（见 `package.json` 的 `engines`），且已装好 DSH。
 
 目前**只支持从 GitHub 安装**（npm 包尚未发布）。
 
@@ -136,6 +142,15 @@ lib/pricing.js     官方价目表、峰谷判定、花费计算（纯函数）
 lib/client.js      浏览器侧：探针 + 侧栏渲染 + 两个按钮
 test/              selftest / client-selftest / consistency
 ```
+
+## 反馈
+
+- 遇到问题、发现金额对不上，或想提建议：**[开 issue](https://github.com/Fireawa/dsh-convo-tally/issues)**。
+- 报问题时请尽量带上：
+  - DSH 版本与插件版本（Release 版本号，或 `npm ls dsh-convo-tally`）；
+  - 侧栏显示金额与官方账单的对比（涉及计价偏差时）；
+  - 复现步骤：什么时候开始的、切过币种或重置过没有。
+- 以 issue 为主，PR 不保证合并。
 
 ## 许可
 

@@ -2,6 +2,10 @@
 
 **Per-conversation cost readout for the DSH sidebar.** Two numbers that answer one question: *how much has this conversation cost?*
 
+[![CI](https://github.com/Fireawa/dsh-convo-tally/actions/workflows/ci.yml/badge.svg)](https://github.com/Fireawa/dsh-convo-tally/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/Fireawa/dsh-convo-tally)](https://github.com/Fireawa/dsh-convo-tally/releases)
+
 ```
 [reset] [¥]
 This chat · today   ¥3.82
@@ -23,6 +27,8 @@ This chat · total   ¥12.34
 - No network calls, no telemetry, no credential access.
 
 ## Install
+
+Requires **Node.js 20+** (see `engines` in `package.json`) and a working DSH installation.
 
 **GitHub only for now** — the npm package is not published yet.
 
@@ -132,6 +138,15 @@ lib/pricing.js     official price tables, peak-window logic, cost math (pure fun
 lib/client.js      browser: the probe, the sidebar widget, the two buttons
 test/              selftest / client-selftest / consistency
 ```
+
+## Feedback
+
+- Bugs, wrong amounts, or suggestions: **[open an issue](https://github.com/Fireawa/dsh-convo-tally/issues)**.
+- Please include:
+  - your DSH version and the plugin version (release tag, or `npm ls dsh-convo-tally`);
+  - the amount shown in the sidebar vs. the official bill, when the number looks wrong;
+  - steps to reproduce: when it started, whether you switched currency or reset.
+- Issues are the main channel; pull requests are not guaranteed to be merged.
 
 ## License
 
