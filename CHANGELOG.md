@@ -8,6 +8,7 @@
 
 - 安装说明改为**仅 GitHub 安装**：npm 包尚未发布，原先的 `dsh plugin --profile web add dsh-convo-tally` 会 404。
 - 删除「已知限制」段落（中英两版 README 与 CHANGELOG 中的对应小节）。
+- 安装说明补充「锁定版本」与「离线安装」；已发布 tag `v0.1.0` 与对应 GitHub Release（附 tgz）。
 
 ## [0.1.0] - 2026-10-25
 

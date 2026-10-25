@@ -24,10 +24,24 @@
 
 ## 安装
 
-目前**只支持从 GitHub 安装**（npm 包尚未发布）：
+目前**只支持从 GitHub 安装**（npm 包尚未发布）。
+
+安装最新版：
 
 ```bash
 dsh plugin --profile web add github:Fireawa/dsh-convo-tally
+```
+
+锁定到某个版本（推荐，避免以后主分支变动影响你）：
+
+```bash
+dsh plugin --profile web add github:Fireawa/dsh-convo-tally#v0.1.0
+```
+
+离线安装：从 [Releases](https://github.com/Fireawa/dsh-convo-tally/releases) 下载 `dsh-convo-tally-0.1.0.tgz`，把下面路径换成实际文件位置：
+
+```bash
+dsh plugin --profile web add ./dsh-convo-tally-0.1.0.tgz
 ```
 
 本地开发（改完立即生效）：

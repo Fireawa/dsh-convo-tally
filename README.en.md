@@ -24,10 +24,24 @@ This chat · total   ¥12.34
 
 ## Install
 
-**GitHub only for now** — the npm package is not published yet:
+**GitHub only for now** — the npm package is not published yet.
+
+Latest:
 
 ```bash
 dsh plugin --profile web add github:Fireawa/dsh-convo-tally
+```
+
+Pin a version (recommended, so future changes on `main` cannot surprise you):
+
+```bash
+dsh plugin --profile web add github:Fireawa/dsh-convo-tally#v0.1.0
+```
+
+Offline: grab `dsh-convo-tally-0.1.0.tgz` from [Releases](https://github.com/Fireawa/dsh-convo-tally/releases) and point the command at the file:
+
+```bash
+dsh plugin --profile web add ./dsh-convo-tally-0.1.0.tgz
 ```
 
 Local development (picks up edits immediately):
