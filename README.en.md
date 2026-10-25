@@ -36,14 +36,16 @@ dsh plugin --profile web add github:Fireawa/dsh-convo-tally
 Pin a version (recommended, so future changes on `main` cannot surprise you):
 
 ```bash
-dsh plugin --profile web add github:Fireawa/dsh-convo-tally#v0.1.1
+dsh plugin --profile web add github:Fireawa/dsh-convo-tally#v0.2.1
 ```
 
-Offline: grab `dsh-convo-tally-0.1.1.tgz` from [Releases](https://github.com/Fireawa/dsh-convo-tally/releases) and point the command at the file:
+Offline: grab `dsh-convo-tally-0.2.1.tgz` from [Releases](https://github.com/Fireawa/dsh-convo-tally/releases) and point the command at the file:
 
 ```bash
-dsh plugin --profile web add ./dsh-convo-tally-0.1.1.tgz
+dsh plugin --profile web add ./dsh-convo-tally-0.2.1.tgz
 ```
+
+**Upgrading**: point the command at the newer tag. Since `0.2.0`, `stateVersion` is 4, so the old cache is dropped and history is **re-folded once** — no data is lost, the first open may just take a moment.
 
 Local development (picks up edits immediately):
 

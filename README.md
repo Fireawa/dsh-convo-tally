@@ -37,14 +37,16 @@ dsh plugin --profile web add github:Fireawa/dsh-convo-tally
 锁定到某个版本（推荐，避免以后主分支变动影响你）：
 
 ```bash
-dsh plugin --profile web add github:Fireawa/dsh-convo-tally#v0.1.1
+dsh plugin --profile web add github:Fireawa/dsh-convo-tally#v0.2.1
 ```
 
-离线安装：从 [Releases](https://github.com/Fireawa/dsh-convo-tally/releases) 下载 `dsh-convo-tally-0.1.1.tgz`，把下面路径换成实际文件位置：
+离线安装：从 [Releases](https://github.com/Fireawa/dsh-convo-tally/releases) 下载 `dsh-convo-tally-0.2.1.tgz`，把下面路径换成实际文件位置：
 
 ```bash
-dsh plugin --profile web add ./dsh-convo-tally-0.1.1.tgz
+dsh plugin --profile web add ./dsh-convo-tally-0.2.1.tgz
 ```
+
+**升级**：把上面的版本号换成新版即可。`0.2.0` 起 `stateVersion` 为 4，旧缓存会自动作废并**重新折叠计算一次历史金额**——不会丢数据，只是首次打开可能慢一拍。
 
 本地开发（改完立即生效）：
 
