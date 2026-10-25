@@ -10,7 +10,7 @@
 
 Expanding **bill** shows the last 7 days with their own totals:
 
-![Bill panel: cost per day for the last 7 days, weekday labels, and the sum](https://raw.githubusercontent.com/Fireawa/dsh-convo-tally/main/docs/screenshot-bill.png)
+![Bill panel: per-day cost, call count and the sum for the last 7 days](https://raw.githubusercontent.com/Fireawa/dsh-convo-tally/main/docs/screenshot-bill.png)
 
 [中文](README.md) · [Changelog](CHANGELOG.md) · [License](#license)
 
