@@ -8,6 +8,10 @@
 
 ![Sidebar widget: reset, currency toggle and bill buttons; today and total amounts; peak/off-peak badge](https://raw.githubusercontent.com/Fireawa/dsh-convo-tally/main/docs/screenshot.png)
 
+Expanding **bill** shows the last 7 days with their own totals:
+
+![Bill panel: cost per day for the last 7 days, weekday labels, and the sum](https://raw.githubusercontent.com/Fireawa/dsh-convo-tally/main/docs/screenshot-bill.png)
+
 [中文](README.md) · [Changelog](CHANGELOG.md) · [License](#license)
 
 ---

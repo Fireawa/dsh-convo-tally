@@ -8,6 +8,10 @@
 
 ![侧栏效果：重置 / 币种切换 / 账单三个按钮，本对话今日与累计金额，峰谷角标](https://raw.githubusercontent.com/Fireawa/dsh-convo-tally/main/docs/screenshot.png)
 
+展开「账单」可以看到最近 7 天每天的花费与合计：
+
+![账单面板：最近 7 天每天的花费、当天的星期，以及合计](https://raw.githubusercontent.com/Fireawa/dsh-convo-tally/main/docs/screenshot-bill.png)
+
 [English](README.en.md) · [更新日志](CHANGELOG.md) · [许可](#许可)
 
 ---
