@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 宿主侧自测:计价(人民币 + 美元)与投影折叠语义。
  * 运行:node test/selftest.mjs
  */
@@ -74,7 +74,7 @@ check('两次累加 totalCny = 0.01', view(s).totalCny, 0.01)
 check('两次累加 totalUsd = 0.0015', view(s).totalUsd, 0.0015)
 check('今日同额 todayCny = 0.01', view(s).todayCny, 0.01)
 check('dayKey 为北京日 2026-10-24', view(s).dayKey, '2026-10-24')
-check('调用数 2', view(s).calls, 2)
+check('调用数 2(读 state,wire 不再暴露)', s.total.calls, 2)
 check('sessionId 透传', view(s).sessionId, 'session-test')
 
 // ── 4. 幂等 ────────────────────────────────────────────────────

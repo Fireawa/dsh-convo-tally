@@ -236,6 +236,8 @@ check('今天那行显示 ¥3.82', billText.includes('¥3.82'), true)
 check('昨天那行显示 ¥1.50', billText.includes('¥1.50'), true)
 check('合计 = 3.82 + 1.50 = ¥5.32', billText.includes('¥5.32'), true)
 check('没有数据的日子显示 ¥0.00', billText.includes('¥0.00'), true)
+check('显示每天调用次数(· 9次)', billText.includes('· 9次'), true)
+check('零次的日子不显示次数', billText.includes('· 0次'), false)
 
 // 切币种:面板跟着变
 buttonsOf(Widget()).find(b => ['¥', '$'].includes(b.children[0])).props.onClick()
@@ -258,6 +260,15 @@ billButton().props.onClick()
 const noDays = textOf(Widget())
 check('没有 days 也不崩', billRowNodes(Widget()).length, 8)
 check('全部显示 ¥0.00', /近 7 天/.test(noDays) && noDays.includes('¥0.00'), true)
+billButton().props.onClick()
+
+// 旧对话:宿主持有更早的记录,但最近 7 天为 0 → 给出说明而不是让人以为坏了
+const oldDay = shiftDay(todayK, -30)
+Probe({ useProjection: () => view({ sessionId: 'session-a', days: [{ day: oldDay, cny: 6.66, usd: 0.99, calls: 10 }] }) })
+billButton().props.onClick()
+const oldText = textOf(Widget())
+check('提示「近 7 天没有花费」', oldText.includes('近 7 天没有花费'), true)
+check('窗口外的旧记录不出现在行里', oldText.includes('¥6.66'), false)
 billButton().props.onClick()
 
 console.log('\n[14] 容错')

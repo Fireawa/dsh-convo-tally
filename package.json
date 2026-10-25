@@ -1,6 +1,6 @@
 ﻿{
   "name": "dsh-convo-tally",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "type": "module",
   "description": "DSH 侧栏会话记账：本对话的今日与累计花费，人民币/美元双币，按官方峰谷价目表在每次模型调用时结算。",
   "keywords": [

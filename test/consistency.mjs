@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 一致性守卫:峰谷时刻表在宿主(lib/pricing.js)与客户端(lib/client.js)各存一份。
  *
  * 客户端那份是"展示用"——它必须能随墙上时钟变化,不能等会话事件,
@@ -17,6 +17,7 @@ const check = (name, actual, expected) => {
 }
 
 const hostSrc = readFileSync(new URL('../lib/pricing.js', import.meta.url), 'utf8')
+const indexSrc = readFileSync(new URL('../lib/index.js', import.meta.url), 'utf8')
 const clientSrc = readFileSync(new URL('../lib/client.js', import.meta.url), 'utf8')
 
 /** 取单行赋值的右侧并压掉空白。 */
@@ -68,11 +69,15 @@ check('两份都有假日表', hostHolidays !== null && clientHolidays !== null,
 check('假日列表完全一致', JSON.stringify(hostHolidays), JSON.stringify(clientHolidays))
 check('假日都是合法日期', hostHolidays.every(d => /^\d{4}-\d{2}-\d{2}$/.test(d) && Number.isFinite(Date.parse(d))), true)
 
-console.log('\n[4] 补充:宿主价目表自洽')
-check('人民币 flash 峰 > 谷', 
-  hostSrc.includes('cacheMiss: 2') && hostSrc.includes('cacheMiss: 1'), true)
-check('美元表也在(非汇率折算)', hostSrc.includes('cacheMiss: 0.3') && hostSrc.includes('cacheMiss: 0.15'), true)
-check('两度小数展示(toFixed(2))', clientSrc.includes("toFixed(2)"), true)
+console.log('\n[4] 跨文件不变量:宿主保留天数 ≥ 界面显示天数')
+// 界面按「最近 N 个自然日」取数,宿主必须至少保留 N 天,否则账单会静默显示成 ¥0.00。
+const keptMatch = indexSrc.match(/const DAYS_KEPT = (\d+)/)
+const shownMatch = clientSrc.match(/lastDays\((\d+),\s*now\)/)
+const kept = keptMatch === null ? NaN : Number(keptMatch[1])
+const shown = shownMatch === null ? NaN : Number(shownMatch[1])
+check('两处都能解析到', Number.isFinite(kept) && Number.isFinite(shown), true)
+check('界面显示 7 天', shown, 7)
+check('宿主保留天数 ≥ 界面显示天数', kept >= shown, true)
 
 console.log('\n' + (failed === 0 ? '全部通过' : failed + ' 项失败'))
 process.exit(failed === 0 ? 0 : 1)
