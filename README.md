@@ -105,16 +105,6 @@ dsh plugin --profile web remove dsh-convo-tally
 | 跳过 fork 继承前缀 | 父会话已付过，不能重复计 |
 | 模型取自 `request/header` | `assistant/message` 只带 usage，不带模型 |
 
-## 已知限制
-
-- **只计 DeepSeek 官方两族**（flash / pro）。其它模型计入「未计价」并在界面提示，不伪造成 0 元。
-- **Search / Fetch 未计入**。官方目前对 DSH 等工具链路免收这两项，但**自北京时间 2026-11-01 00:00 起**按每 1000 次成功请求 ￥5 / $0.75 计费；届时本插件显示的金额会低于实际账单。
-- **子代理单独记账**，不并入主对话。
-- 无 `sessionId` 的后台调用（标题生成、记忆压缩等）不进单对话数字。
-- 金额在**每次模型调用结算时**跳一次——usage 随 `assistant/message` 落地，做不到逐 token。
-- 金额是「token × 官方价目表」的估算，**不是账单凭证**。
-- 重置基线存在 `localStorage`，上限 50 条；localStorage 不可用（如隐私模式）时重置无效。
-
 ## 自测
 
 ```bash

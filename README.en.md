@@ -101,16 +101,6 @@ Wrong totals usually come from wrong folding, not wrong arithmetic. This mirrors
 | Skip the fork-inherited prefix | The parent session already paid for it |
 | Model comes from `request/header` | `assistant/message` carries usage but no model |
 
-## Known limitations
-
-- **DeepSeek official models only** (flash / pro). Unknown models are counted as "unpriced" and shown as such rather than silently as zero.
-- **Search / Fetch are not counted.** They are currently free for agent tool chains, but **from 2026-11-01 00:00 Beijing time** they bill at ¥5 / $0.75 per 1000 successful requests, so the figure will then understate the real bill.
-- **Subagents are metered separately** and not merged into the main conversation.
-- Background calls without a `sessionId` (title generation, compaction) are not attributed to any conversation.
-- Amounts step **once per model call**; usage lands with `assistant/message`, so per-token live updates are not possible.
-- Amounts are an estimate from tokens × the official price table — **not a billing receipt**.
-- Reset baselines live in `localStorage` (max 50 entries) and do nothing when storage is unavailable (e.g. private mode).
-
 ## Tests
 
 ```bash

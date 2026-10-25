@@ -7,6 +7,7 @@
 ### 文档
 
 - 安装说明改为**仅 GitHub 安装**：npm 包尚未发布，原先的 `dsh plugin --profile web add dsh-convo-tally` 会 404。
+- 删除「已知限制」段落（中英两版 README 与 CHANGELOG 中的对应小节）。
 
 ## [0.1.0] - 2026-10-25
 
@@ -31,8 +32,3 @@
 - 折叠语义对齐宿主官方 `tokenUsage` 投影：同 turn/step 替换、重放幂等、`llm/retry-started` 开新槽位、跳过 fork 继承前缀。
 - 90 个真实会话日志与宿主 `tokenUsage` 投影逐字段比对，输入 / 输出 / 缓存命中全部逐 token 相同。
 - 与官方中文页、英文页的单价逐项核对一致。
-
-### 已知问题
-
-- Search / Fetch 费用未计入（官方 2026-11-01 起按次收费）。
-- 子代理单独记账，不并入主对话。
