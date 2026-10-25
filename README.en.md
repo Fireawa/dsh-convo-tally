@@ -40,13 +40,13 @@ dsh plugin --profile web add github:Fireawa/dsh-convo-tally
 Pin a version (recommended, so future changes on `main` cannot surprise you):
 
 ```bash
-dsh plugin --profile web add github:Fireawa/dsh-convo-tally#v0.2.2
+dsh plugin --profile web add github:Fireawa/dsh-convo-tally#v0.2.3
 ```
 
-Offline: grab `dsh-convo-tally-0.2.2.tgz` from [Releases](https://github.com/Fireawa/dsh-convo-tally/releases) and point the command at the file:
+Offline: grab `dsh-convo-tally-0.2.3.tgz` from [Releases](https://github.com/Fireawa/dsh-convo-tally/releases) and point the command at the file:
 
 ```bash
-dsh plugin --profile web add ./dsh-convo-tally-0.2.2.tgz
+dsh plugin --profile web add ./dsh-convo-tally-0.2.3.tgz
 ```
 
 **Upgrading**: point the command at the newer tag. **No cache clearing needed** and history is not recomputed — old data is read through a compatible schema.
