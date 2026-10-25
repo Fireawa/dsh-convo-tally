@@ -36,13 +36,13 @@ dsh plugin --profile web add github:Fireawa/dsh-convo-tally
 锁定到某个版本（推荐，避免以后主分支变动影响你）：
 
 ```bash
-dsh plugin --profile web add github:Fireawa/dsh-convo-tally#v0.1.0
+dsh plugin --profile web add github:Fireawa/dsh-convo-tally#v0.1.1
 ```
 
-离线安装：从 [Releases](https://github.com/Fireawa/dsh-convo-tally/releases) 下载 `dsh-convo-tally-0.1.0.tgz`，把下面路径换成实际文件位置：
+离线安装：从 [Releases](https://github.com/Fireawa/dsh-convo-tally/releases) 下载 `dsh-convo-tally-0.1.1.tgz`，把下面路径换成实际文件位置：
 
 ```bash
-dsh plugin --profile web add ./dsh-convo-tally-0.1.0.tgz
+dsh plugin --profile web add ./dsh-convo-tally-0.1.1.tgz
 ```
 
 本地开发（改完立即生效）：
@@ -98,6 +98,12 @@ dsh plugin --profile web remove dsh-convo-tally
 - 高峰：**北京时间周一至周五 9:00–12:00、14:00–18:00**。
 - 其余时段、**周末**与**中国法定节假日**全天为空闲；空闲价 = 高峰价的一半。
 - **按每次调用的「发起时刻」定档**，不是按现在，也不是按流结束时刻。
+
+### 口径说明
+
+- 金额是「tokens × 官方价目表」的**估算**，不是账单凭证；实际扣费以 DeepSeek 官方账单为准。
+- **Search / Fetch 未计入**：官方自 2026-11-01 起按每 1000 次成功请求计费，届时侧栏数字会偏低。
+- **子代理单独记账**，不并入主对话；无 `sessionId` 的后台调用（标题生成、历史压缩等）不计入。
 
 ## 设计要点
 

@@ -36,13 +36,13 @@ dsh plugin --profile web add github:Fireawa/dsh-convo-tally
 Pin a version (recommended, so future changes on `main` cannot surprise you):
 
 ```bash
-dsh plugin --profile web add github:Fireawa/dsh-convo-tally#v0.1.0
+dsh plugin --profile web add github:Fireawa/dsh-convo-tally#v0.1.1
 ```
 
-Offline: grab `dsh-convo-tally-0.1.0.tgz` from [Releases](https://github.com/Fireawa/dsh-convo-tally/releases) and point the command at the file:
+Offline: grab `dsh-convo-tally-0.1.1.tgz` from [Releases](https://github.com/Fireawa/dsh-convo-tally/releases) and point the command at the file:
 
 ```bash
-dsh plugin --profile web add ./dsh-convo-tally-0.1.0.tgz
+dsh plugin --profile web add ./dsh-convo-tally-0.1.1.tgz
 ```
 
 Local development (picks up edits immediately):
@@ -94,6 +94,12 @@ cost = (uncached_input × miss_rate
 - Peak: **Mon–Fri 09:00–12:00 and 14:00–18:00 Beijing time**.
 - Everything else — including **weekends** and **Chinese public holidays**, all day — is off-peak. Off-peak is half the peak rate.
 - The tier is chosen by **each request's start time**, not by "now" or by when the stream finished.
+
+### What the numbers cover
+
+- Amounts are an **estimate** from tokens × the official price table, not a billing receipt. The official DeepSeek bill is the source of truth.
+- **Search / Fetch are not counted**: from 2026-11-01 they bill per 1000 successful requests, so the figure will then understate the real cost.
+- **Subagents are metered separately** and not merged into the main conversation; background calls without a `sessionId` (title generation, compaction) are not counted.
 
 ## Design notes
 

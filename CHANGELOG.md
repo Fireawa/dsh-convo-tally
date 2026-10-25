@@ -2,15 +2,19 @@
 
 本项目遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
-## [Unreleased]
+## [0.1.1] - 2026-10-25
 
 ### 文档
 
 - 安装说明改为**仅 GitHub 安装**：npm 包尚未发布，原先的 `dsh plugin --profile web add dsh-convo-tally` 会 404。
-- 删除「已知限制」段落（中英两版 README 与 CHANGELOG 中的对应小节）。
-- 安装说明补充「锁定版本」与「离线安装」；已发布 tag `v0.1.0` 与对应 GitHub Release（附 tgz）。
+- 安装说明补充「锁定版本」与「离线安装」，并发布 tag `v0.1.1` 与对应 GitHub Release（附 tgz）。
 - 描述文案统一（GitHub About 与 `package.json`）；README 补充两条口径：「今日按北京时间 0 点切换」「每次模型调用结算一次」。
 - README 开头加入真实侧栏截图（`docs/screenshot.png`），替换原来的纯文本示意。
+- 新增「口径说明」小节：金额是估算而非账单凭证、Search / Fetch 未计入、子代理单独记账。原来的「已知限制」段落已删除，这三条改用中性措辞保留，避免用户把侧栏数字当成实际扣费。
+
+### 移除
+
+- `scripts/set-owner.mjs`：占位符替换脚本，仓库里已没有 `__OWNER__` 需要替换，属于发布引导遗留。
 
 ## [0.1.0] - 2026-10-25
 
