@@ -1,3 +1,15 @@
+## [0.2.2] - 2026-10-25
+
+### 修复
+
+- **重启后插件失效**。`0.2.0` 把 `stateVersion` 从 3 升到 4，而 DSH 的投影恢复在「checkpoint 行版本不匹配且 `baseSeq > 0`」时会直接抛错（`dsh-session-projection` 的 `SessionProjectionRegistry.restore()`），已有会话因此整条恢复失败、侧栏不再出现。
+- 现在 `stateVersion` **保持 3**，改用向后兼容的 schema：`days` 与 `today` 都可选，读到旧 checkpoint 时由 `daysOf()` 把 `today` 折进 `days[dayKey]`，历史金额不丢。
+- 新增回归用例：旧 checkpoint（只有 `today`、没有 `days`）能通过 schema，折叠后按天表包含旧金额；`stateVersion` 断言固定为 3，防止以后误升。
+
+### 文档
+
+- 安装段的「升级说明」改为符合实际：不需要清缓存，也不会重算历史。
+
 ## [0.2.1] - 2026-10-25
 
 ### 变更
@@ -25,7 +37,7 @@
 
 - **「账单」按钮**：展开显示本对话**最近 7 天每天的费用**与合计，跟随币种切换。
 - 宿主投影新增按天明细 `days`（保留最近 8 天），今天的金额由 `days[dayKey]` 派生，不再单独存一份，避免两处口径漂移。
-- `stateVersion` 升至 4；旧缓存自动作废并整条重折叠。
+- 旧 checkpoint（只有 `today`）会被折进按天表，见 `0.2.2` 的修正。
 
 ### 准确性
 

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 宿主侧自测:计价(人民币 + 美元)与投影折叠语义。
  * 运行:node test/selftest.mjs
  */
@@ -191,11 +191,29 @@ check('后一天拿到新值 ¥1.004', dayOf(vMove, '2026-10-24').cny, 1.004)
 check('后一天调用数 1', dayOf(vMove, '2026-10-24').calls, 1)
 check('累计 = 1.004', vMove.totalCny, 1.004)
 
+// 旧 checkpoint 兼容:DSH 不允许在已有会话上改 stateVersion,所以 v3 状态只有 today 没有 days。
+// 读到这种状态时要把它折进 days[dayKey],否则历史金额会在升级后消失。
+const { days: _dropDays, ...legacyBase } = init()
+const legacy = {
+  ...legacyBase,
+  dayKey: '2026-10-23',
+  today: { cny: 2.5, usd: 0.375, calls: 5 },
+  total: { cny: 2.5, usd: 0.375, calls: 5 },
+}
+check('旧状态能通过 schema', P.stateSchema.safeParse(legacy).success, true)
+const sLegacy = P.apply(legacy, msg(9, d3, usage(1_000_000, 0), 'deepseek-flash', 9, 1))
+const vLegacy = view(sLegacy)
+check('旧 today 折进按天表', dayOf(vLegacy, '2026-10-23').cny, 2.5)
+check('新的一天照常累计', dayOf(vLegacy, '2026-10-24').cny, 1)
+check('累计 = 旧值 + 新值', vLegacy.totalCny, 3.5)
+
 console.log('\n[11] schema 校验')
 check('state 通过', P.stateSchema.safeParse(s6).success, true)
 check('view 通过', P.wire.viewSchema.safeParse(view(s6)).success, true)
 check('北京日界', beijingDayKey(Date.parse('2026-10-24T15:59:59Z')), '2026-10-24')
-check('stateVersion = 4', P.stateVersion, 4)
+// 必须是 3:DSH 的 restore() 在「行版本不匹配且 baseSeq > 0」时直接抛错,
+// 已有会话不能靠 bump stateVersion 来迁移,只能让 schema 向后兼容。
+check('stateVersion = 3(不能 bump,见 daysOf 注释)', P.stateVersion, 3)
 
 console.log('\n' + (failed === 0 ? '全部通过' : failed + ' 项失败'))
 process.exit(failed === 0 ? 0 : 1)
