@@ -85,6 +85,7 @@ const view = over => ({
   todayCny: 3.82, todayUsd: 0.53,
   totalCny: 12.34, totalUsd: 1.71,
   dayKey: todayKey, calls: 9, unpriced: 0,
+  web: { calls: 0, cny: 0, usd: 0 },
   ...over,
 })
 
@@ -271,7 +272,34 @@ check('提示「近 7 天没有花费」', oldText.includes('近 7 天没有花�
 check('窗口外的旧记录不出现在行里', oldText.includes('¥6.66'), false)
 billButton().props.onClick()
 
-console.log('\n[14] 容错')
+console.log('\n[14] 网页搜索费的拆分展示')
+billButton().props.onClick()   // 确保面板打开(上一节最后是收起的)
+Probe({ useProjection: () => view({ web: { calls: 2, cny: 0.01, usd: 0.0015 } }) })
+const webText = textOf(Widget())
+check('显示「累计含网页搜索 2 次」', webText.includes('累计含网页搜索 2 次'), true)
+check('显示对应金额 ¥0.01', webText.includes('¥0.01'), true)
+const totalSpan = (() => {
+  let found = null
+  const walk = n => {
+    if (!n || typeof n !== 'object' || found) return
+    if (Array.isArray(n)) { n.forEach(walk); return }
+    if (typeof n.props?.className === 'string' && n.props.className === 'ccw-value' && typeof n.props.title === 'string' && n.props.title.includes('网页搜索')) found = n
+    if (n.children) n.children.forEach(walk)
+  }
+  walk(Widget())
+  return found
+})()
+check('累计行有网页搜索 tooltip', totalSpan !== null, true)
+// 切币种后金额变美元
+buttonsOf(Widget()).find(b => ['¥', '$'].includes(b.children[0])).props.onClick()
+check('切美元显示 $0.00(小额两位)', textOf(Widget()).includes('$0.00'), true)
+buttonsOf(Widget()).find(b => ['¥', '$'].includes(b.children[0])).props.onClick()
+// 没有网页搜索就不显示这行
+Probe({ useProjection: () => view({ web: { calls: 0, cny: 0, usd: 0 } }) })
+check('0 次时不显示该行', textOf(Widget()).includes('累计含网页搜索'), false)
+billButton().props.onClick()
+
+console.log('\n[15] 容错')
 for (const [label, ctx] of [['空 ctx', {}], ['slots undefined', { slots: undefined }], ['slots 形状不对', { slots: { register: 'x' } }]]) {
   let threw = false
   try { exports.apply(ctx) } catch (err) { threw = true }

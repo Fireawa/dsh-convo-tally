@@ -207,7 +207,80 @@ check('旧 today 折进按天表', dayOf(vLegacy, '2026-10-23').cny, 2.5)
 check('新的一天照常累计', dayOf(vLegacy, '2026-10-24').cny, 1)
 check('累计 = 旧值 + 新值', vLegacy.totalCny, 3.5)
 
-console.log('\n[11] schema 校验')
+console.log('\n[11] 网页搜索按次计费(官方 2026-11-01 起)')
+const webCall = (seq, time, callId, name = 'web_search') => ({
+  type: 'tool/call', seq, time, data: { turn: 1, step: 1, callId, name, arguments: '{}' },
+})
+const webResult = (seq, time, callId, failed = false) => ({
+  type: 'tool/result', seq, time,
+  data: {
+    turn: 1, step: 1,
+    message: { role: 'tool', toolCallId: callId, isError: failed, content: [] },
+    ...(failed ? { error: { name: 'WebError', code: 'WEB_BLOCKED_URL' } } : {}),
+  },
+})
+// 官方边界:北京时间 2026-11-01 00:00
+const BEFORE = Date.parse('2026-10-31T23:59:00+08:00')
+const AFTER = Date.parse('2026-11-01T00:01:00+08:00')
+const FEE_CNY = 0.005
+const FEE_USD = 0.00075
+
+// 生效前:免费
+const sBefore = fold(init(), [webCall(1, BEFORE, 'c1'), webResult(2, BEFORE, 'c1')])
+check('生效前不收费(total)', view(sBefore).totalCny, 0)
+check('生效前不计次数', view(sBefore).web.calls, 0)
+check('挂起项已清掉', Object.keys(sBefore.pendingWeb).length, 0)
+
+// 生效后:收费
+const sAfter = fold(init(), [webCall(1, AFTER, 'c2'), webResult(2, AFTER, 'c2')])
+check('生效后收 ¥0.005', view(sAfter).totalCny, FEE_CNY)
+check('生效后收 $0.00075', view(sAfter).totalUsd, FEE_USD)
+check('记 1 次', view(sAfter).web.calls, 1)
+check('web 金额同步', view(sAfter).web.cny, FEE_CNY)
+check('网页请求不计入模型调用数', sAfter.total.calls, 0)
+
+// 失败不收费
+const sFail = fold(init(), [webCall(1, AFTER, 'c3'), webResult(2, AFTER, 'c3', true)])
+check('失败不收费', view(sFail).totalCny, 0)
+check('失败不计次数', view(sFail).web.calls, 0)
+check('失败也清挂起', Object.keys(sFail.pendingWeb).length, 0)
+
+// 只有 call 没有 result:不收费
+const sNoResult = fold(init(), [webCall(1, AFTER, 'c4')])
+check('没有结果不收费', view(sNoResult).totalCny, 0)
+check('挂起中留 1 条', Object.keys(sNoResult.pendingWeb).length, 1)
+
+// 同一个 result 重复上报:只收一次
+const sDup = fold(init(), [
+  webCall(1, AFTER, 'c5'), webResult(2, AFTER, 'c5'), webResult(3, AFTER, 'c5'),
+])
+check('重复 result 只收一次', view(sDup).totalCny, FEE_CNY)
+check('次数仍是 1', view(sDup).web.calls, 1)
+
+// web_fetch 不计(由本机 HTTP 实现,官方不收 Fetch 费)
+const sFetch = fold(init(), [webCall(1, AFTER, 'c6', 'web_fetch'), webResult(2, AFTER, 'c6')])
+check('web_fetch 不收费', view(sFetch).totalCny, 0)
+
+// 费用记在**调用发起**那天:11-01 23:59 发起、次日 00:01 才出结果
+const CROSS_CALL = Date.parse('2026-11-01T23:59:00+08:00')
+const CROSS_RESULT = Date.parse('2026-11-02T00:01:00+08:00')
+const sCross = fold(init(), [
+  webCall(1, CROSS_CALL, 'c7'),
+  webResult(2, CROSS_RESULT, 'c7'),
+])
+check('跨零点:归到发起日(11-01)', dayOf(view(sCross), '2026-11-01')?.cny, FEE_CNY)
+check('跨零点:不落在结果日(11-02)', dayOf(view(sCross), '2026-11-02'), undefined)
+
+// 与模型费共存
+const sMixed = fold(init(), [
+  msg(1, AFTER, usage(1_000_000, 0), 'deepseek-flash', 1, 1),
+  webCall(2, AFTER, 'c8'),
+  webResult(3, AFTER, 'c8'),
+])
+check('模型费 + 网页费 合计', view(sMixed).totalCny, 1 + FEE_CNY)
+check('其中网页部分单独可读', view(sMixed).web.cny, FEE_CNY)
+
+console.log('\n[12] schema 校验')
 check('state 通过', P.stateSchema.safeParse(s6).success, true)
 check('view 通过', P.wire.viewSchema.safeParse(view(s6)).success, true)
 check('北京日界', beijingDayKey(Date.parse('2026-10-24T15:59:59Z')), '2026-10-24')
