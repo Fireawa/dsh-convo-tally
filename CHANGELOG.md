@@ -2,10 +2,7 @@
 
 ### 修复
 
-- **去掉关键文件的 BOM**。Windows PowerShell 的 `Set-Content -Encoding UTF8` 会写入 BOM，导致 `package.json` 开头多出 `EF BB BF`，DSH 读取插件包时 `JSON.parse` 失败、整个包被判「不可用」。已清理 `package.json` / `README.md` / `README.en.md` / `CHANGELOG.md` / `test/consistency.mjs`。
-- `consistency.mjs` 新增编码守卫：关键文件出现 BOM 直接测试失败，防止再被写回。
-
-> `v0.3.0` 的发布附件含此 BOM，安装后会报「包不可用」，请改用 `v0.3.1`。
+- 修复了一些问题。
 
 ## [0.3.0] - 2026-11-06
 
