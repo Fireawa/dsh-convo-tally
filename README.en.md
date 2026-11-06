@@ -1,4 +1,4 @@
-﻿# dsh-convo-tally
+# dsh-convo-tally
 
 **Per-conversation cost readout for the DSH sidebar.** Two numbers that answer one question: *how much has this conversation cost?*
 

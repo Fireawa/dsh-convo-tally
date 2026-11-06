@@ -1,4 +1,4 @@
-﻿# dsh-convo-tally
+# dsh-convo-tally
 
 **DSH 侧栏会话记账。** 两行数字，回答一个问题：*这个对话花了多少钱？*
 

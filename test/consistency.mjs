@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 一致性守卫:峰谷时刻表在宿主(lib/pricing.js)与客户端(lib/client.js)各存一份。
  *
  * 客户端那份是"展示用"——它必须能随墙上时钟变化,不能等会话事件,
@@ -78,6 +78,16 @@ const shown = shownMatch === null ? NaN : Number(shownMatch[1])
 check('两处都能解析到', Number.isFinite(kept) && Number.isFinite(shown), true)
 check('界面显示 7 天', shown, 7)
 check('宿主保留天数 ≥ 界面显示天数', kept >= shown, true)
+
+console.log('\n[5] 文件编码:关键文件不能带 BOM')
+// package.json 带 BOM 会让 DSH 直接判定「包不可用」:
+//   Unexpected token '﻿', "﻿{ \"name\"..." is not valid JSON
+// Windows PowerShell 的 `Set-Content -Encoding UTF8` 会写入 BOM,这里守住。
+for (const rel of ['package.json', 'lib/index.js', 'lib/pricing.js', 'lib/client.js', 'cordis.patch.yml']) {
+  const buf = readFileSync(new URL('../' + rel, import.meta.url))
+  const hasBom = buf.length >= 3 && buf[0] === 0xEF && buf[1] === 0xBB && buf[2] === 0xBF
+  check(rel + ' 无 BOM', hasBom, false)
+}
 
 console.log('\n' + (failed === 0 ? '全部通过' : failed + ' 项失败'))
 process.exit(failed === 0 ? 0 : 1)
