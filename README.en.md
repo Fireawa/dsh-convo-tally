@@ -106,7 +106,7 @@ cost = (uncached_input × miss_rate
 - Amounts are an **estimate** from tokens × the official price table, not a billing receipt. The official DeepSeek bill is the source of truth.
 - **Web search is now counted per request**: since 2026-11-01 00:00 Beijing, Search bills ¥5 / $0.75 per 1000 successful requests. The plugin charges one unit per successful web_search call, attributes it to the day the call **started**, and includes it in today / total / bill (the bill footer shows the web share separately).
 - **web_fetch is not counted**: it is served by local HTTP in DSH, not by DeepSeek's Fetch API, so charging it would overstate the bill.
-- **A web_search call with several queries still counts as 1** (a lower bound; native search may run up to max_uses server-side searches per round).
+- **A web_search call with several queries bills per query**: the tool fans out one request per distinct query (identical queries are deduped), so N distinct queries = N searches. Missing or invalid arguments fall back to 1 (a lower bound).
 - **Subagents are metered separately** and not merged into the main conversation; background calls without a `sessionId` (title generation, compaction) are not counted.
 
 ## Design notes

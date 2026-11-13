@@ -208,8 +208,8 @@ check('新的一天照常累计', dayOf(vLegacy, '2026-10-24').cny, 1)
 check('累计 = 旧值 + 新值', vLegacy.totalCny, 3.5)
 
 console.log('\n[11] 网页搜索按次计费(官方 2026-11-01 起)')
-const webCall = (seq, time, callId, name = 'web_search') => ({
-  type: 'tool/call', seq, time, data: { turn: 1, step: 1, callId, name, arguments: '{}' },
+const webCall = (seq, time, callId, name = 'web_search', args = '{}') => ({
+  type: 'tool/call', seq, time, data: { turn: 1, step: 1, callId, name, arguments: args },
 })
 const webResult = (seq, time, callId, failed = false) => ({
   type: 'tool/result', seq, time,
@@ -260,6 +260,31 @@ check('次数仍是 1', view(sDup).web.calls, 1)
 // web_fetch 不计(由本机 HTTP 实现,官方不收 Fetch 费)
 const sFetch = fold(init(), [webCall(1, AFTER, 'c6', 'web_fetch'), webResult(2, AFTER, 'c6')])
 check('web_fetch 不收费', view(sFetch).totalCny, 0)
+
+// 一次调用带多个不同查询 → 每个查询各算一次搜索请求
+const q3 = JSON.stringify({ queries: ['a', 'b', 'c'] })
+const sMulti = fold(init(), [webCall(1, AFTER, 'c9', 'web_search', q3), webResult(2, AFTER, 'c9')])
+check('3 个查询 → 3 次请求的费用', view(sMulti).totalCny, FEE_CNY * 3)
+check('web.calls 记 3 次', view(sMulti).web.calls, 3)
+check('美元同步 ×3', view(sMulti).totalUsd, FEE_USD * 3)
+
+// 完全相同的查询只执行一次 → 去重
+const qDup = JSON.stringify({ queries: ['x', 'x', ' y ', 'y'] })
+const sDedup = fold(init(), [webCall(1, AFTER, 'c10', 'web_search', qDup), webResult(2, AFTER, 'c10')])
+check('重复查询去重后按 2 次计', view(sDedup).web.calls, 2)
+check('去重后费用 = 2 次', view(sDedup).totalCny, FEE_CNY * 2)
+
+// 参数异常/缺失 → 保守按 1 次
+for (const [label, args] of [['空对象', '{}'], ['非法 JSON', 'not json'], ['空数组', '{"queries":[]}'], ['非字符串', '{"queries":[1,2]}'], ['undefined', undefined]]) {
+  const s = fold(init(), [webCall(1, AFTER, 'c11', 'web_search', args), webResult(2, AFTER, 'c11')])
+  check('参数' + label + ' → 按 1 次计', view(s).web.calls, 1)
+}
+
+// 旧格式挂起值(纯数字)仍按 1 次算
+const legacyPending = { ...init(), pendingWeb: { c12: AFTER } }
+const sLegacyPending = P.apply(legacyPending, webResult(2, AFTER, 'c12'))
+check('旧格式挂起值 → 1 次', view(sLegacyPending).web.calls, 1)
+check('旧格式挂起值 → 1 次费用', view(sLegacyPending).totalCny, FEE_CNY)
 
 // 费用记在**调用发起**那天:11-01 23:59 发起、次日 00:01 才出结果
 const CROSS_CALL = Date.parse('2026-11-01T23:59:00+08:00')
