@@ -98,7 +98,7 @@ dsh plugin --profile web remove dsh-convo-tally
 
 - 宿主的 `inputTokens` 是**已扣除缓存命中**的部分，和 `cacheReadTokens` 互斥——两个桶不能相加再套一个价。
 - `reasoning` token 官方单独上报且**不计费**，不进入公式。
-- 官方表未单列「缓存写入」，按命中价计；实测 19000+ 条用量记录中该桶恒为 0。
+- 官方表未单列「缓存写入」，按命中价计；实测该桶恒为 0。
 
 ### 峰谷
 
