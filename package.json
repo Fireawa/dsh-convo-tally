@@ -1,6 +1,6 @@
 {
   "name": "dsh-convo-tally",
-  "version": "0.4.0",
+  "version": "0.4.4",
   "type": "module",
   "description": "DSH 侧栏会话记账：本对话的今日与累计花费，人民币/美元双币，按官方峰谷价目表在每次模型调用时结算。",
   "keywords": [
@@ -45,8 +45,8 @@
     "LICENSE"
   ],
   "scripts": {
-    "test": "node test/selftest.mjs && node test/client-selftest.mjs && node test/consistency.mjs",
-    "check": "node --check lib/index.js && node --check lib/pricing.js && node --check lib/client.js && npm test"
+    "test": "node test/selftest.mjs && node test/client-selftest.mjs && node test/consistency.mjs && node test/property.mjs",
+    "check": "node --check lib/index.js && node --check lib/pricing.js && node --check lib/client.js && node --check test/property.mjs && npm test"
   },
   "dependencies": {
     "zod": "4.6.5"

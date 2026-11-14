@@ -305,7 +305,64 @@ const sMixed = fold(init(), [
 check('模型费 + 网页费 合计', view(sMixed).totalCny, 1 + FEE_CNY)
 check('其中网页部分单独可读', view(sMixed).web.cny, FEE_CNY)
 
-console.log('\n[12] schema 校验')
+console.log('\n[12] 搜索轮次自身的 token 费')
+// 这类请求日志里没有 usage,只能估:输入从请求体算,输出按固定 80 tokens。
+// 最小请求体:{"messages":[{"role":"user","content":"aaaa"}]} = 48 个 ASCII 字符 → 48/4 = 12 tokens
+// 谷价 flash:12×1/M + 80×4/M = 0.000012 + 0.00032 = 0.000332
+const searchRound = (seq, time, body) => ({ type: 'web/deepseek-search-llm-request', seq, time, data: { body } })
+const tinyBody = { model: 'deepseek-flash', messages: [{ role: 'user', content: 'aaaa' }] }
+const OFF_R = Date.parse('2026-11-05T20:00:00+08:00')   // 周四 20:00 谷
+const PEAK_R = Date.parse('2026-11-05T10:00:00+08:00')  // 周四 10:00 峰
+const round9 = v => Math.round(v * 1e9) / 1e9
+
+const sOff = fold(init(), [searchRound(1, OFF_R, tinyBody)])
+check('谷价轮次 = ¥0.000332', round9(view(sOff).totalCny), 0.000332)
+check('计入 web 桶', round9(view(sOff).web.cny), 0.000332)
+check('不是一次模型调用(calls 不变)', sOff.total.calls, 0)
+check('计入当天按天表', round9(dayOf(view(sOff), '2026-11-05').cny), 0.000332)
+
+const sPeak = fold(init(), [searchRound(1, PEAK_R, tinyBody)])
+check('峰价正好是谷价 2 倍', round9(view(sPeak).totalCny), 0.000664)
+
+// token 费从第一笔调用就存在(与搜索按次费的 11-01 生效边界无关)
+const sOld = fold(init(), [searchRound(1, Date.parse('2026-10-20T20:00:00+08:00'), tinyBody)])
+check('11-01 之前的轮次 token 仍计费', round9(view(sOld).totalCny), 0.000332)
+
+// 模型:body.model 优先,缺失时回退 state.model
+const sNoModel = fold(init(), [
+  { type: 'request/header', seq: 1, time: OFF_R, data: { header: { config: { model: 'deepseek-v4-pro' } } } },
+  searchRound(2, OFF_R, { messages: tinyBody.messages }),
+])
+check('缺 body.model 时用 state.model(pro 谷价)', round9(view(sNoModel).totalCny), round9((12 * 4.5 + 80 * 13.5) / 1e6))
+
+// body.model 不认识时回退到 state.model —— 不能静默算成 0
+const sFallback = fold(init(), [
+  { type: 'request/header', seq: 1, time: OFF_R, data: { header: { config: { model: 'deepseek-v4-pro' } } } },
+  searchRound(2, OFF_R, { model: 'brand-new-model-2099', messages: tinyBody.messages }),
+])
+check('未知 body.model → 回退 state.model(pro)', round9(view(sFallback).totalCny), round9((12 * 4.5 + 80 * 13.5) / 1e6))
+
+// body.model 认识时优先用它,不被 state.model 覆盖
+const sBodyWins = fold(init(), [
+  { type: 'request/header', seq: 1, time: OFF_R, data: { header: { config: { model: 'deepseek-v4-pro' } } } },
+  searchRound(2, OFF_R, { model: 'deepseek-flash', messages: tinyBody.messages }),
+])
+check('body.model 优先(flash 价)', round9(view(sBodyWins).totalCny), 0.000332)
+// 未知模型 + 无 state.model → 不计价,也不炸
+const sUnknown = fold({ ...init(), model: '' }, [searchRound(1, OFF_R, { messages: tinyBody.messages })])
+check('模型未知 → 不计费', view(sUnknown).totalCny, 0)
+
+// fork 继承前缀里的轮次不计
+const sFork = fold({ ...init(), inherited: 10 }, [searchRound(1, OFF_R, tinyBody), searchRound(20, OFF_R, tinyBody)])
+check('继承前缀跳过,只算 seq≥10 的那一轮', round9(view(sFork).totalCny), 0.000332)
+
+// 重放幂等:同样的日志折叠两次,结果一致
+const sReplay1 = fold(init(), [searchRound(1, OFF_R, tinyBody), searchRound(2, OFF_R, tinyBody)])
+const sReplay2 = fold(init(), [searchRound(1, OFF_R, tinyBody), searchRound(2, OFF_R, tinyBody)])
+check('两轮 = 2× 单轮', round9(view(sReplay1).totalCny), 0.000664)
+check('重放结果一致', view(sReplay1).totalCny, view(sReplay2).totalCny)
+
+console.log('\n[13] schema 校验')
 check('state 通过', P.stateSchema.safeParse(s6).success, true)
 check('view 通过', P.wire.viewSchema.safeParse(view(s6)).success, true)
 check('北京日界', beijingDayKey(Date.parse('2026-10-24T15:59:59Z')), '2026-10-24')
